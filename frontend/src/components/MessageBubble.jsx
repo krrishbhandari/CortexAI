@@ -167,7 +167,7 @@ function MessageBubble({ role, content, images }) {
             }
           }}
         >
-        //   {content}
+         {content}
         </Markdown>
 
       </div>
