@@ -233,13 +233,8 @@ function SideBar() {
                 open={showBilling}
                 onClose={() => setShowBilling(false)}
             />
-
         </>
     )
-
-
-
-
 }
 
 export default SideBar
