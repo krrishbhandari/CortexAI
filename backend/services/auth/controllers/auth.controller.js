@@ -22,6 +22,8 @@ export const login = async(req,res) => {
     }
 
        const sessionId = crypto.randomUUID();
+        await redis.set(`user-session-${user?._id}`, sessionId , "EX", 7 * 24 * 60 * 60)
+
        await redis.set(`session-${sessionId}`, JSON.stringify({
         userId: user._id,
         name: user.name,
@@ -31,7 +33,7 @@ export const login = async(req,res) => {
         credits: user.credits,
         totalCredits: user.totalCredits,
         planExpiresAt: user.planExpiresAt
-        
+
        }), "EX" , 7 * 24 * 60 * 60);
 
        res.cookie("session", sessionId, { 
@@ -121,7 +123,7 @@ export const deductCredits = async (req, res) => {
             return res.status(400).json({message:"user not found"})
         }
 
-       const requiredCredits=COST[agent] || 1
+       const requiredCredits = COST[agent] || 1
         if(user.credits<requiredCredits){
          return res.status(400).json({message:"Not enough credits."})
         }
