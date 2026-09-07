@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import {useDispatch, useSelector} from "react-redux"
 import sendMessage from "../features/sendMessage";
-import { Code2, FileText, Globe, ImageIcon, MessageSquare, Mic, Paperclip, Presentation, Send, Zap} from 'lucide-react'
+import { Code2, FileText, Globe, ImageIcon, MessageSquare, Mic, MicOff, Paperclip, Presentation, Send, Zap} from 'lucide-react'
 import {addMessage, setArtifacts, setMessages} from "../redux/messageSlice"
 import {createConversation} from "../features/createConversation"
 import {addConversation, setConvTitle, setSelectedConversation} from "../redux/conversationSlice"
@@ -12,7 +12,53 @@ function ChatInput(){
     const [selectedAgent, setSelectedAgent] = useState("Auto");
     const { selectedConversation } = useSelector(state => state.conversation)
     const {messages} = useSelector(state=>state.message);
+    const [selectedFile , setSelectedFile] = useState(null)
+    const [listening, setListening] = useState(false)
+    const recognitionRef = useRef(null)
+    const fileRef = useRef(null)
+
     const dispatch = useDispatch();
+
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognition) return;
+
+    const recognition = new SpeechRecognition()
+    recognition.lang = "en-US"
+    recognition.interimResults = true;
+    recognition.continuous = true;
+
+    recognition.onresult = (event) => {
+      let transcript = ""
+
+      for (let index = event.resultIndex; index < event.results.length; index++) {
+
+        transcript += event.results[index][0].transcript
+      }
+      setValue(transcript)
+    }
+
+    recognition.onend = () => {
+      setListening(false)
+    }
+
+    recognitionRef.current = recognition
+  }, [])
+
+  const toggleMic = () => {
+    if (!recognitionRef.current) {
+      alert("speech recognition not supported")
+    }
+    if (listening) {
+      recognitionRef.current.stop()
+      setListening(false)
+    } else {
+      recognitionRef.current.start()
+      setListening(true)
+    }
+
+  }
+
 
     const handleSendMessage = async () => {
         let conversation = selectedConversation()
@@ -28,14 +74,19 @@ function ChatInput(){
             await updateConversation({id:conversation?._id , title:value.trim()})
             dispatch(setConvTitle({conversationId:conversation?._id , title:value.slice(0 , 40)})) 
         }
-  
-        const payload = { 
-            prompt:value.trim(), conversationId:conversation?._id , agent:selectedAgent.toLowerCase()
-        }
         
+        const formData = new FormData()
+        formData.append("prompt", value.trim())
+        formData.append("conversationId", conversation?._id)
+        formData.append("agent", selectedAgent.toLowerCase())
+         if (selectedFile) {
+           formData.append("file", selectedFile)
+         }
+
         dispatch(addMessage({role:"user" , content:value.trim()}))
         setValue("")
-        const data = await sendMessage(payload)
+        const data = await sendMessage(formData)
+        setSelectedFile(null)
         dispatch(setArtifacts(data.artifacts || []))
         dispatch(addMessage({ role: "assistant", content: data?.answer, images: data?.images }))
         console.log(data)
@@ -103,18 +154,50 @@ function ChatInput(){
                   })}
                 </div>
 
+          {selectedFile && <div className='my-3'>
+
+            <div className='inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2'>
+              {
+                selectedFile?.type === "application/pdf" ? <FileText size={16}
+
+                  className="text-red-400"
+                /> : selectedFile.type.startsWith("image/") && <img src={URL.createObjectURL(selectedFile)} className="h-10 w-10 rounded-xl object-cover mt-3"
+                />
+              }
+
+              <div>
+                <p className='text-xs text-white'>
+                  {selectedFile?.name}
+                </p>
+                <p className='text-[10px] text-slate-500'>
+                  {Math.ceil(selectedFile.size)}KB
+                </p>
+
+              </div>
+              <button className='ml-2' onClick={() => { setSelectedFile(null); fileRef.current.value = "" }}><X size={14} className='text-slate-500 hover:text-white' /></button>
+            </div>
+          </div>
+          }
+
 
                 <textarea placeholder='Ask Anything...' onChange={(e) => setValue(e.target.value)} value={value} className="w-full bg-transparent outline-none resize-none text-[14px] text-slate-200 placeholder:text-slate-600 leading-relaxed [scrollbar-width:none] [&::-webkit-scrollbar]:hidden disabled:opacity-50" rows={3}/>
                  
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
 
-                        <button className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-600 hover:text-slate-400 hover:bg-white/[0.05] border border-transparent hover:border-white/[0.06] transition-all duration-150 bg-transparent cursor-pointer">
+                        <input type="file" accept='.pdf,image/*' hidden ref={fileRef} onChange={(e) => {
+                          const file = e.target.files[0]
+                            if (file) {
+                              setSelectedFile(file)
+                             }
+                           }} />
+
+                        <button className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-600 hover:text-slate-400 hover:bg-white/[0.05] border border-transparent hover:border-white/[0.06] transition-all duration-150 bg-transparent cursor-pointer" onClick={() => fileRef.current.click()}>
                             <Paperclip size={16}/>
                         </button>
 
-                        <button className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-600 hover:text-slate-400 hover:bg-white/[0.05] border border-transparent hover:border-white/[0.06] transition-all duration-150 bg-transparent cursor-pointer">
-                            <Mic size={16}/>
+                        <button onClick={toggleMic}  className={`flex items-center justify-center w-8 h-8 rounded-lg  transition-all duration-150 cursor-pointer ${listening ?"bg-red-500 text-white":"text-slate-600 hover:bg-white/[0.05]" }`}>
+                           {listening?<Mic size={16} />:<MicOff size={16}/>} 
                         </button>
                     </div>
 
