@@ -13,6 +13,7 @@ export const checkAgentLimit = async (userId, agent) => {
     const max = Limits[agent] || Limits["chat"]
     const key = `rate:${userId}:${agent}`
     const count = await redis.incr(key)
+
     if (count == 1) {
         await redis.expire(key, 60)
     }
@@ -34,17 +35,11 @@ export const checkAgentLimit = async (userId, agent) => {
             retryAfter: time,
             message: `You have reached the ${agent} limit (${max} requests/minute). Try again in ${time}.`
         }
-
         throw error
-  
 }
 
 return {
     remaining: max - count,
     limit: max
- 
-}
-  
-
-   
+  }  
 }
