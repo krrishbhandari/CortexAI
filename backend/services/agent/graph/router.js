@@ -9,7 +9,8 @@ export const router = async (state) => {
                 }
     }
 
-    if(state.file.mimetype === "application/pdf"){
+    if(state.file){
+      if(state.file.mimetype === "application/pdf"){
         return {
             ...state,
             agent: "pdfRag"
@@ -21,6 +22,7 @@ export const router = async (state) => {
             ...state,
             agent: "imageAnalyzer"
         }
+    }
     }
 
     const llm = await getModel("router")
