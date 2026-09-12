@@ -8,7 +8,7 @@ export const agent = async (req,res,next) => {
         const {prompt,conversationId,agent}=req.body
 
         const file=req.file
-        console.log("file",file)
+        // console.log("file",file)
 
         const userId=req.headers["x-user-id"]
 
@@ -20,7 +20,7 @@ export const agent = async (req,res,next) => {
             prompt,conversationId,agent,userId,file
         })
 
-        console.log("result",result)
+        // console.log("result",result)
 
         await addMessage(conversationId,"user",prompt)
         await addMessage(conversationId,"assistant",result.aiResponse)

@@ -7,8 +7,10 @@ const getCurrentUser = async () => {
        const {data} = await api.get("/api/me");
        return data;
     }catch(error){
-        console.log(error);
-        return null;
+        if (error.response?.status !== 401) {
+            console.error("Unable to load the current user", error)
+        }
+        return null
     }
 }
 

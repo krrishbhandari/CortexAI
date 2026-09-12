@@ -18,7 +18,7 @@ export const chatAgent = async(state) => {
     const systemPrompt = `You are CortexAI , an intelligent AI assistant.
                            
                            ${searchContext}
-                           If saerchContext exists:
+                           If searchContext exists:
                            - Use search results to answer.
                            - Do not mention internal tools.                       
 
@@ -64,6 +64,7 @@ export const chatAgent = async(state) => {
         aiResponse :response.content
     }
     }catch(error){
+       console.log(error)
        return {
         ...state,
          aiResponse:error?.data?.message || "failed to generate chat"

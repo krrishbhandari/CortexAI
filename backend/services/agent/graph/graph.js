@@ -10,7 +10,6 @@ import { visionAgent } from "../agents/vision.agent.js";
 import { pdfRag } from "../agents/pdfRag.agent.js";
 import { imageAnalyzer } from "../agents/imageAnalyzer.agent.js";
 
-
 const workflow = new StateGraph(agentState)
 
 workflow.addNode("router", router)

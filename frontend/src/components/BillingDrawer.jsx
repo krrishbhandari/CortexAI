@@ -4,7 +4,6 @@ import { Crown, X } from 'lucide-react'
 import { useSelector } from 'react-redux'
 import { createOrder } from '../features/createOrder'
 import { verifyPayment } from '../features/verifyPayment'
-
 function BillingDrawer({ open, onClose }) {
 
     const { userData } = useSelector(state => state.user)
@@ -38,7 +37,6 @@ function BillingDrawer({ open, onClose }) {
             console.log(error)
         }
     }
-
     return (
         <AnimatePresence>
             {open && <> <motion.div
@@ -66,8 +64,8 @@ function BillingDrawer({ open, onClose }) {
                                 Plans & Credits
                             </div>
                         </div>
-
-                        <button onClick={onClose} className="w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center">
+                        <button onClick={onClose} className="w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center"
+                        >
                             <X size={18} className="text-slate-300" />
                         </button>
                     </div>
@@ -104,7 +102,12 @@ function BillingDrawer({ open, onClose }) {
                                         }}
                                     />
                                 </div>
+
+
                             </div>
+
+
+
                         </div>
                     </div>
 
@@ -123,6 +126,14 @@ function BillingDrawer({ open, onClose }) {
                             <button className='mt-4 w-full rounded-lg bg-indigo-600 hover:bg-indigo-700 py-2 text-white' onClick={() => handleUpgrade("pro")}>Upgrade</button>
                         </div>
                     </div>
+
+
+
+
+
+
+
+
                 </motion.div>
             </>
             }

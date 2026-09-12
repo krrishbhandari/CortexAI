@@ -9,9 +9,8 @@ export const pdfAgent = async (state) => {
     try {
         const rate = await checkAgentLimit(state.userId,"pdf")
         
-        
         const llm = await getModel("pdf")
-        const prompt=`   You are an expert document writer.
+        const prompt= `You are an expert document writer.
 
                          Return ONLY valid JSON.
 
@@ -54,11 +53,11 @@ export const pdfAgent = async (state) => {
           ...state,
           aiResponse:`# PDF Generated
 
-                      **${data.title}**
+**${data.title}**
 
-                     📥 [Download PDF](${downloadUrl})
+📥 [Download PDF](${downloadUrl})
 
-                     _Link expires in 10 minutes._`
+_Link expires in 10 minutes._`
                 }
 
 } catch (error) {

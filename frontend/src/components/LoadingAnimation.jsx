@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from "motion/react"
-
 function LoadingAnimation() {
 
     const Thinking_Lables = ["Thinking", "Analyzing", "Reasoning", "Generating"]
@@ -41,8 +40,9 @@ function LoadingAnimation() {
                     style={{ boxShadow: "0 0 14px rgba(125,211,252,0.55)" }}
                     animate={{ scale: [1, 1.25, 1] }}
                     transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                />
 
+
+                />
             </div>
             <div className='flex overflow-hidden'>
                 <AnimatePresence mode='wait'>
@@ -67,9 +67,12 @@ function LoadingAnimation() {
                                         delay: i * 0.07,
                                     }}
 
-                                > {ch} </motion.div>
+                                >
+                                    {ch}
+                                </motion.div>
                             ))
                         }
+
                     </motion.div>
                 </AnimatePresence>
             </div>

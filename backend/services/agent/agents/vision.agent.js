@@ -53,11 +53,12 @@ const downloadUrl = await getFromS3(filename , 24*60)
 
 return {
     ...state,
-    aiResponse:` ![Generated Image](${downloadUrl})
+    aiResponse:`
+![Generated Image](${downloadUrl})
 
-                 📥 [Download Image](${downloadUrl})
+📥 [Download Image](${downloadUrl})
 
-                 ⏳ Link expires in 10 minutes.`
+⏳ Link expires in 10 minutes.`
 }
     } catch (error) {
        console.log(error)

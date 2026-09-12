@@ -1,11 +1,9 @@
 import fs, { stat } from "fs"
 import {PDFParse} from "pdf-parse"
-
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters"
-import { HumanMessage, SystemMessage } from "@langchain/core/messages"
-
 import { vectorStore } from "../config/vectorDb.js"
 import { getModel } from "../config/llmModels.js"
+import { HumanMessage, SystemMessage } from "@langchain/core/messages"
 import { deductCredits } from "../utils/deductCredits.js"
 import { checkAgentLimit } from "../config/agentLimit.js"
 
@@ -62,7 +60,7 @@ new HumanMessage(`
 
       const response=await llm.invoke(messages)
       await deductCredits(state.userId,"pdf")
-      console.log(response)
+      // console.log(response)
       return {
         ...state,
         aiResponse:response.content
@@ -75,6 +73,8 @@ new HumanMessage(`
             aiResponse:error?.data?.message || "failed to analyze pdf"
         }
    }finally{
-         fs.unlinkSync(state.file.path)
+         if (state.file?.path && fs.existsSync(state.file.path)) {
+            fs.unlinkSync(state.file.path)
+         }
    }
 }

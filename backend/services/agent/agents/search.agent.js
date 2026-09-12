@@ -12,7 +12,7 @@ export const searchAgent = async (state) => {
         })
         
         await deductCredits(state.userId, "search")
-        console.log(results)
+        // console.log(results)
         return {
             ...state,
             searchResults: results,

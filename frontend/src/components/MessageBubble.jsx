@@ -1,12 +1,10 @@
+import { Check, Copy, ExternalLink, FileX2, X } from 'lucide-react'
 import React from 'react'
 import { useState } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-
-import { Check, Copy, ExternalLink, FileX2, X } from 'lucide-react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
-
 function MessageBubble({ role, content, images }) {
   const isUser = role === "user"
   const [lightBox, setLightBox] = useState(null)
@@ -23,8 +21,14 @@ function MessageBubble({ role, content, images }) {
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
-      <div className={`w-fit max-w-[92vw] md:max-w-[72%] px-4 py-2.5 rounded-2xl break-words overflow-hidden leading-relaxed
-        ${isUser ? "bg-linear-to-br from-indigo-500 to-violet-700 text-white rounded-tr-sm" : " text-slate-200 rounded-tl-sm" }`}>
+      <div className={`w-fit max-w-[92vw] md:max-w-[72%]
+  px-4 py-2.5 rounded-2xl
+  break-words overflow-hidden
+  leading-relaxed
+        ${isUser
+          ? "bg-gradient-to-br from-indigo-500 to-violet-700 text-white rounded-tr-sm"
+          : " text-slate-200 rounded-tl-sm"
+        }`}>
 
 
         {images.length > 0 && (
@@ -37,6 +41,7 @@ function MessageBubble({ role, content, images }) {
                 loading="lazy"
                 onError={(e) => e.currentTarget.remove()}
                 className="w-40 h-28 rounded-xl object-cover border border-white/10 cursor-zoom-in hover:opacity-90 transition"
+
               />
             ))}
           </div>
@@ -100,7 +105,7 @@ function MessageBubble({ role, content, images }) {
             ),
             code: ({ className, children }) => {
               const value = String(children).trim()
-
+              
 
               if (!className) {
                 return (
@@ -111,7 +116,7 @@ function MessageBubble({ role, content, images }) {
 
               }
 
-              const language = className?.replace("language-", "")
+              const language = className.replace("language-", "")
 
               return (
                 <div className='my-4 overflow-hidden rounded-xl border border-white/10 bg-[#111318]'>
@@ -119,12 +124,12 @@ function MessageBubble({ role, content, images }) {
                     <span className='uppercase text-xs text-slate-400'>
                       {language}
                     </span>
-                    <button className='flex items-center gap-1 text-xs'
-                      onClick={() => copyCode(value)}>
+                    <button className='flex items-center gap-1 text-xs' 
+                    onClick={() => copyCode(value)}>
                       {
                         copiedCode == value ?
                           <>
-                            <Check size={14} />
+                            <Check size={14}/>
                             Copied
                           </> :
                           <><Copy size={14} />Copy</>
@@ -153,22 +158,29 @@ function MessageBubble({ role, content, images }) {
                 </div>
               )
             },
-            img: ({ src }) => {
-              if (!src) return null;
-              return (
-                <img
-                  src={src}
-                  onClick={() => setLightBox(src)}
-                  loading="lazy"
-                  onError={(e) => e.currentTarget.remove()}
-                  className="w-40 h-28 rounded-xl object-cover border border-white/10 cursor-zoom-in hover:opacity-90 transition"
-                />
-              )
-            }
+          img:({src})=>{
+            if(!src)return null;
+            return (
+              <img
+                src={src}
+                onClick={() => setLightBox(src)}
+                loading="lazy"
+                onError={(e) => e.currentTarget.remove()}
+                className="w-40 h-28 rounded-xl object-cover border border-white/10 cursor-zoom-in hover:opacity-90 transition"
+              />
+            )
+          }
+
+
+
+
+
           }}
         >
-         {content}
+          {content}
         </Markdown>
+
+
 
       </div>
       {lightBox &&
@@ -182,6 +194,7 @@ function MessageBubble({ role, content, images }) {
           <img
             src={lightBox}
             className="max-w-[90vw] max-h-[85vh] rounded-2xl border border-white/10 shadow-2xl object-contain"
+
           />
 
         </div>}
