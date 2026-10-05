@@ -9,15 +9,14 @@ import { checkAgentLimit } from "../config/agentLimit.js"
 
 export const pdfRag=async (state)=>{
    try {
-    await checkAgentLimit(state.userId,"pdf")
+      await checkAgentLimit(state.userId,"pdf")
 
       const buffer=fs.readFileSync(state.file.path)
-      
       const pdf=new PDFParse({
         data:buffer
       })
 
-      const result=await pdf.getText()
+      const result = await pdf.getText()
       const text=result.text
 
       const spilliter=new RecursiveCharacterTextSplitter({
@@ -38,18 +37,18 @@ export const pdfRag=async (state)=>{
        const messages=[
         new SystemMessage(`You are CortexAI PDF Assistant.
 
-                            Rules:
+Rules:
 
-                             - Answer ONLY from the uploaded PDF.
+- Answer ONLY from the uploaded PDF.
 
-                             - Never make up information.
+- Never make up information.
 
-                             - If the answer is not present in the PDF, reply:
+- If the answer is not present in the PDF, reply:
 
-                             "I couldn't find this information in the uploaded PDF."
+"I couldn't find this information in the uploaded PDF."
 
-                             - Use Markdown formatting.
-                              `),
+- Use Markdown formatting.
+`),
 
 new HumanMessage(`
     Context:${context}
@@ -66,6 +65,8 @@ new HumanMessage(`
         aiResponse:response.content
       }
 
+
+
    } catch (error) {
     console.log(error)
          return {
@@ -77,4 +78,6 @@ new HumanMessage(`
             fs.unlinkSync(state.file.path)
          }
    }
+
+
 }
